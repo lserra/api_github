@@ -15,7 +15,7 @@ headers = {'Content-Type': 'application/json',
 def insert_sql_template(item):
     return """
     INSERT INTO repositories ('id','name','full_name','description','homepage','git_url','ssh_url','language','private',
-    'archived') VALUES ("{}", "{}","{}","{}","{}","{}","{}","{}","{}","{}")
+    'archived') VALUES ("{}","{}","{}","{}","{}","{}","{}","{}","{}","{}")
     """.format(item.get('id'), item.get('name'), item.get('full_name'), item.get('description'), item.get('homepage'),
                item.get('git_url'), item.get('ssh_url'), item.get('language'), item.get('private'),
                item.get('archived')
