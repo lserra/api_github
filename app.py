@@ -26,7 +26,7 @@ def insert_repos(items):
     con = None
 
     try:
-        con = db.connect('/home/lserra/PycharmProjects/api_github/github.db')
+        con = db.connect('/home/lserra/PycharmProjects/api_github/data/github.db')
 
         cur = con.cursor()
 
