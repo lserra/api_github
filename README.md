@@ -8,6 +8,8 @@ Analysis -> you can run the SQL command and export the results to CSV file.
 
 Integrations -> you can do new request to api and to save the results into the database.
 
+Metadata -> you can see all metadata of this app.
+
 ## Comments
 
 This project is under construction yet.
