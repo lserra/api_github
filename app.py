@@ -1,32 +1,36 @@
+# -*- coding: utf-8 -*-
+
 """
-### API GitHub
-Realiza pesquisa de repositorios no GitHub e armazena estas informaçoes no BD (SQLite)
+API GitHub
+Realiza pesquisa de repositorios no GitHub e armazena estas informaçoes
+no BD (SQLite)
 """
 import sys
 import requests
 import sqlite3 as db
 
-api_url_base = 'https://api.github.com/'
-headers = {'Content-Type': 'application/json',
-           'User-Agent': 'Python Student',
-           'Accept': 'application/vnd.github.v3+json'}
-
 
 def insert_sql_template(item):
-    return """
-    INSERT INTO repositories ('id','name','full_name','description','homepage','git_url','ssh_url','language','private',
-    'archived') VALUES ("{}","{}","{}","{}","{}","{}","{}","{}","{}","{}")
-    """.format(item.get('id'), item.get('name'), item.get('full_name'), item.get('description'), item.get('homepage'),
-               item.get('git_url'), item.get('ssh_url'), item.get('language'), item.get('private'),
-               item.get('archived')
-               )
+    description = str(item.get('description')).replace('"', '')
+
+    return """INSERT INTO repositories ('id','name','full_name','description', \
+    'homepage','git_url','ssh_url','language','private','archived') \
+    VALUES ("{}","{}","{}","{}","{}","{}","{}","{}","{}","{}")
+    """.format(
+        item.get('id'), item.get('name'), item.get('full_name'),
+        description, item.get('homepage'), item.get('git_url'),
+        item.get('ssh_url'), item.get('language'), item.get('private'),
+        item.get('archived')
+        )
 
 
 def insert_repos(items):
     con = None
 
     try:
-        con = db.connect('/home/lserra/PycharmProjects/api_github/data/github.db')
+        con = db.connect(
+            '/home/lserra/PycharmProjects/api_github/data/github.db'
+            )
 
         cur = con.cursor()
 
@@ -48,7 +52,14 @@ def insert_repos(items):
 
 
 def get_repos(name_repo):
-    api_url = '{}search/repositories?q={}+language:py&sort=stars&order=desc'.format(api_url_base, name_repo)
+    api_url_base = 'https://api.github.com/'
+    headers = {
+        'Content-Type': 'application/json',
+        'User-Agent': 'Python Student',
+        'Accept': 'application/vnd.github.v3+json'
+        }
+    api_url = '{}search/repositories?q={}+ \
+    language:py&sort=stars&order=desc'.format(api_url_base, name_repo)
 
     r = requests.get(api_url, headers=headers)
 
