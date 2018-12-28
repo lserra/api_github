@@ -5,7 +5,7 @@
 import os
 # from tips.db import get_hashtags, get_tips
 from bottle import (
-    default_app, route, run, request, static_file, view, template
+    default_app, route, run, request, static_file, view, template, error
     )
 
 
