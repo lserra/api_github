@@ -78,6 +78,19 @@
             <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
                   <h1 class="h2">GitHub Data Analysis</h1>
             </div>
+            
+            <!-- Success Message -->
+            <div class="alert alert-success" role="alert">
+                <strong>SUCCESS: </strong>The connection has been done successfully!
+            </div>  
+            <!-- Warning Message -->
+            <div class="alert alert-warning" role="alert">
+                <strong>WARNING: </strong>The connection has been done successfully!
+            </div>  
+            <!-- Error Message -->
+            <div class="alert alert-danger" role="alert">
+                <strong>ERROR: </strong>The connection has been done successfully!
+            </div> 
 
             <!-- Searching repositories -->
             <form>
@@ -87,7 +100,7 @@
                     <div class="input-group-prepend">
                       <div class="input-group-text">Keyword</div>
                     </div>
-                    <input type="text" class="form-control" placeholder="airflow">
+                    <input type="text" class="form-control" placeholder="airflow" required="">
                   </div>
                 </div>
                 <div class="col-sm-4">
