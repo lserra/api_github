@@ -1,0 +1,150 @@
+/* 
+Author : Hujjat Nazari
+Site : template.pplanet.com
+*/
+
+
+/* ------------------
+    General setting
+--------------------*/
+body {
+    font-family: 'Roboto Slab', serif;
+    background-color: #f8f9fb;
+}
+
+a,
+a:hover,
+a:visited {
+    text-decoration: none;
+}
+
+.btn {
+    line-height: 38px;
+    display: inline-block;
+    padding: 0 22px;
+    font-size: 14px;
+    font-weight: 700;
+    margin-right: 10px;
+    text-transform: uppercase;
+    -webkit-transition: all 0.5s ease-in-out;
+    -moz-transition: all 0.5s ease-in-out;
+    -ms-transition: all 0.5s ease-in-out;
+    -o-transition: all 0.5s ease-in-out;
+    transition: all 0.5s ease-in-out;
+    color: #fefefe;
+    background-color: #824dce;
+}
+
+.btn:hover {
+    color: #fefefe;
+    background-color: #e91e63;
+}
+
+.btn i {
+    line-height: 24px;
+    margin-right: 5px;
+    font-size: 10px;
+}
+.fa-heart{
+    color: #e53935;
+}
+.error-page {
+    padding-top: 15vh;
+    text-align: center;
+    display: block;
+    margin: 0 auto auto;
+}
+
+.no-found {
+    color: #313131;
+    font-size: 48px;
+    font-weight: 700;
+    line-height: 24px;
+}
+
+.error-text {
+    color: #313131;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 24px;
+    width: 50%;
+    margin: 30px auto;
+}
+
+.uf-copyright {
+    font-size: 10px;
+}
+
+.copyright {
+    color: #c7c7c7;
+    font-weight: 300;
+    line-height: 24px;
+    bottom: 0;
+    text-align: center;
+    display: block;
+    width: 100%;
+    margin-top: 60px;
+    margin-bottom: 50px;
+}
+
+.error {
+    color: #777;
+    font-size: 120px;
+    font-weight: 700;
+    line-height: 0;
+}
+#astronaut-error {
+    width: 167px;
+    height: 272px;
+}
+
+
+
+/* Responsive */
+
+@media (max-width: 992px) {
+    .copyright {
+        margin: 30px auto 0;
+        bottom: inherit;
+        padding: 0 15px 30px 15px;
+        position: relative;
+        width: 80%;
+        display: block;
+    }
+
+    .error-text {
+        width: 100%;
+    }
+
+    .no-found {
+        line-height: 56px;
+    }
+}
+
+@media (max-width: 650px) {
+    .error {
+        font-size: 180px;
+    }
+}
+
+@media (max-width: 480px) {
+    .no-found {
+        line-height: 50px;
+        font-size: 46px;
+        margin-top: 20px;
+    }
+
+    .error-text {
+        margin: 20px auto;
+    }
+
+    .error {
+        font-size: 100px;
+    }
+}
+
+@media screen and (max-width: 375px) {
+    .error-page {
+        padding-top: 20vh;
+    }
+}

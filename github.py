@@ -42,7 +42,7 @@ def dashboard():
 
 @error(404)
 def error404(error):
-    return 'Nothing here, sorry'
+    return template('404')
 
 
 if os.environ.get('APP_LOCATION') == 'heroku':
