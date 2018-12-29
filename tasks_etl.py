@@ -14,10 +14,7 @@ The tables are recreated daily.
 import sys
 import os
 import requests
-# import sqlite3 as db
 import psycopg2 as db
-
-from os import environ
 
 
 def insert_sql_template(item):
@@ -34,19 +31,14 @@ def insert_sql_template(item):
 def insert_repos(items):
     con = None
     connection_parameters = {
-        # 'host': os.environ.get('PGHOST'),
-        # 'database': os.environ.get('PGDATABASE'),
-        # 'user': os.environ.get('PGUSER'),
-        # 'password': os.environ.get('PGPASSWORD')
-        'host': 'localhost',
-        'database': 'github',
-        'user': 'postgres',
-        'password': 'postgres'
+        'host': os.environ.get('PGHOST'),
+        'database': os.environ.get('PGDATABASE'),
+        'user': os.environ.get('PGUSER'),
+        'password': os.environ.get('PGPASSWORD')
     }
 
     try:
         con = db.connect(
-            # '/home/lserra/PycharmProjects/api_github/data/github.db'
             **connection_parameters
             )
 
