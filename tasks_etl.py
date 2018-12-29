@@ -55,6 +55,7 @@ def insert_repos(items):
 
     except db.DatabaseError as e:
         print(">> Error %s: " % e.args[0])
+        con.rollback
         sys.exit(1)
 
     finally:

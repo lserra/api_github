@@ -1,4 +1,4 @@
--- TABLE REPOSITORIES
+-- TABLE REPOSITORIES [SQLITE]
 CREATE TABLE `repositories` (
 	`id`	INTEGER,
 	`name`	TEXT ( 250 ),
@@ -16,4 +16,24 @@ CREATE TABLE `repositories` (
 	`size`	INTEGER,
 	`stargazers_count`	INTEGER,
 	`watchers_count`	INTEGER
+);
+
+-- TABLE REPOSITORIES [POSTGRES]
+CREATE TABLE repositories (
+	id	INTEGER,
+	"name"	TEXT,
+	full_name	TEXT,
+	description	TEXT,
+	homepage	TEXT,
+	git_url	TEXT,
+	ssh_url	TEXT,
+	"language"	TEXT,
+	private	TEXT,
+	archived	TEXT,
+	forks_count	INTEGER,
+	open_issues_count	INTEGER,
+	score	INTEGER,
+	"size"	INTEGER,
+	stargazers_count	INTEGER,
+	watchers_count	INTEGER
 );

@@ -4,11 +4,13 @@ bottle==0.12.16
 certifi==2018.8.24
 chardet==3.0.4
 Click==7.0
+dataset==1.1.0
 idna==2.7
 itsdangerous==1.1.0
 Jinja2==2.10
 MarkupSafe==1.1.0
 more-itertools==4.3.0
+normality==1.0.0
 oauthlib==2.1.0
 pep8==1.7.1
 pluggy==0.7.1
