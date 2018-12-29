@@ -12,42 +12,66 @@ update the stats (number of likes and retweets) on existing tweets.
 The tables are recreated daily.
 """
 import sys
+import os
 import requests
-import sqlite3 as db
+# import sqlite3 as db
+import psycopg2 as db
+
+from os import environ
 
 
 def insert_sql_template(item):
-    description = str(item.get('description')).replace('"', '')
-
-    return """INSERT INTO repositories ('id','name','full_name','description', \
-    'homepage','git_url','ssh_url','language','private','archived', \
-    'forks_count', 'open_issues_count', 'score', 'size', 'stargazers_count', \
-    'watchers_count') VALUES ("{}","{}","{}","{}","{}","{}","{}","{}","{}", \
-    "{}","{}","{}","{}","{}","{}","{}")
-    """.format(
-        item.get('id'), item.get('name'), item.get('full_name'),
-        description, item.get('homepage'), item.get('git_url'),
-        item.get('ssh_url'), item.get('language'), item.get('private'),
-        item.get('archived'), int(item.get('forks_count')),
-        int(item.get('open_issues_count')), int(item.get('score')),
-        int(item.get('size')), int(item.get('stargazers_count')),
-        int(item.get('watchers_count'))
-        )
+    return '''INSERT INTO repositories (id, name_, full_name, description,
+    homepage, git_url, ssh_url, language_, private,archived,
+    forks_count, open_issues_count, score, size_, stargazers_count,
+    watchers_count) VALUES (%(id)s, %(name_)s, %(full_name)s, %(description)s,
+    %(homepage)s, %(git_url)s, %(ssh_url)s, %(language_)s, %(private)s,
+    %(archived)s, %(forks_count)s, %(open_issues_count)s, %(score)s,
+    %(size_)s, %(stargazers_count)s, %(watchers_count)s)
+    '''
 
 
 def insert_repos(items):
     con = None
+    connection_parameters = {
+        # 'host': os.environ.get('PGHOST'),
+        # 'database': os.environ.get('PGDATABASE'),
+        # 'user': os.environ.get('PGUSER'),
+        # 'password': os.environ.get('PGPASSWORD')
+        'host': 'localhost',
+        'database': 'github',
+        'user': 'postgres',
+        'password': 'postgres'
+    }
 
     try:
         con = db.connect(
-            '/home/lserra/PycharmProjects/api_github/data/github.db'
+            # '/home/lserra/PycharmProjects/api_github/data/github.db'
+            **connection_parameters
             )
 
         cur = con.cursor()
 
         for item in items:
             sql = insert_sql_template(item)
-            cur.execute(sql)
+            cur.execute(sql, {
+                'id': item.get('id'),
+                'name_': item.get('name'),
+                'full_name': item.get('full_name'),
+                'description': str(item.get('description')).replace('"', ''),
+                'homepage': item.get('homepage'),
+                'git_url': item.get('git_url'),
+                'ssh_url': item.get('ssh_url'),
+                'language_': item.get('language'),
+                'private': item.get('private'),
+                'archived': item.get('archived'),
+                'forks_count': int(item.get('forks_count')),
+                'open_issues_count': int(item.get('open_issues_count')),
+                'score': int(item.get('score')),
+                'size_': int(item.get('size')),
+                'stargazers_count': int(item.get('stargazers_count')),
+                'watchers_count': int(item.get('watchers_count'))
+            })
 
         con.commit()
 
