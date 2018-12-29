@@ -20,13 +20,18 @@ def insert_sql_template(item):
     description = str(item.get('description')).replace('"', '')
 
     return """INSERT INTO repositories ('id','name','full_name','description', \
-    'homepage','git_url','ssh_url','language','private','archived') \
-    VALUES ("{}","{}","{}","{}","{}","{}","{}","{}","{}","{}")
+    'homepage','git_url','ssh_url','language','private','archived', \
+    'forks_count', 'open_issues_count', 'score', 'size', 'stargazers_count', \
+    'watchers_count') VALUES ("{}","{}","{}","{}","{}","{}","{}","{}","{}", \
+    "{}","{}","{}","{}","{}","{}","{}")
     """.format(
         item.get('id'), item.get('name'), item.get('full_name'),
         description, item.get('homepage'), item.get('git_url'),
         item.get('ssh_url'), item.get('language'), item.get('private'),
-        item.get('archived')
+        item.get('archived'), int(item.get('forks_count')),
+        int(item.get('open_issues_count')), int(item.get('score')),
+        int(item.get('size')), int(item.get('stargazers_count')),
+        int(item.get('watchers_count'))
         )
 
 
