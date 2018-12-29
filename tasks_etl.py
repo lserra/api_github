@@ -11,10 +11,47 @@ This task should be run daily through a cronjob to check for new tips and
 update the stats (number of likes and retweets) on existing tweets.
 The tables are recreated daily.
 """
+# TODO: logging all tasks
+# TODO: truncate tables
+
 import sys
 import os
 import requests
 import psycopg2 as db
+
+
+con = None
+connection_parameters = {
+    'host': os.environ.get('PGHOST'),
+    'database': os.environ.get('PGDATABASE'),
+    'user': os.environ.get('PGUSER'),
+    'password': os.environ.get('PGPASSWORD')
+}
+
+
+def truncate_tables():
+    try:
+        con = db.connect(
+            **connection_parameters
+            )
+
+        sql = '''DELETE FROM repositories;'''
+
+        cur = con.cursor()
+        cur.execute(sql)
+
+        con.commit()
+
+        print(">> Table has been truncated\n")
+
+    except db.DatabaseError as e:
+        print(">> Error %s: " % e.args[0])
+        con.rollback
+        sys.exit(1)
+
+    finally:
+        if con is not None:
+            con.close()
 
 
 def insert_sql_template(item):
@@ -24,19 +61,11 @@ def insert_sql_template(item):
     watchers_count) VALUES (%(id)s, %(name_)s, %(full_name)s, %(description)s,
     %(homepage)s, %(git_url)s, %(ssh_url)s, %(language_)s, %(private)s,
     %(archived)s, %(forks_count)s, %(open_issues_count)s, %(score)s,
-    %(size_)s, %(stargazers_count)s, %(watchers_count)s)
+    %(size_)s, %(stargazers_count)s, %(watchers_count)s);
     '''
 
 
 def insert_repos(items):
-    con = None
-    connection_parameters = {
-        'host': os.environ.get('PGHOST'),
-        'database': os.environ.get('PGDATABASE'),
-        'user': os.environ.get('PGUSER'),
-        'password': os.environ.get('PGPASSWORD')
-    }
-
     try:
         con = db.connect(
             **connection_parameters
@@ -104,6 +133,7 @@ if __name__ == '__main__':
     items = repo_list['items']
 
     if items is not None:
+        truncate_tables()
         insert_repos(items)
     else:
         print('>> No Repo List Found\n')
