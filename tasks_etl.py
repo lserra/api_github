@@ -11,15 +11,13 @@ This task should be run daily through a cronjob to check for new tips and
 update the stats (number of likes and retweets) on existing tweets.
 The tables are recreated daily.
 """
-# TODO: logging all tasks
-# TODO: truncate tables
-
 import sys
 import os
 import requests
 import psycopg2 as db
+import logging
 
-
+# setting the parameters
 con = None
 connection_parameters = {
     'host': os.environ.get('PGHOST'),
@@ -27,6 +25,25 @@ connection_parameters = {
     'user': os.environ.get('PGUSER'),
     'password': os.environ.get('PGPASSWORD')
 }
+
+# create logger
+logger = logging.getLogger('task_etl')
+logger.setLevel(logging.DEBUG)
+
+# create console handler and set level to debug
+ch = logging.StreamHandler()
+ch.setLevel(logging.DEBUG)
+
+# create formatter
+formatter = logging.Formatter(
+    '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+    )
+
+# add formatter to ch
+ch.setFormatter(formatter)
+
+# add ch to logger
+logger.addHandler(ch)
 
 
 def truncate_tables():
@@ -37,20 +54,25 @@ def truncate_tables():
 
         sql = '''DELETE FROM repositories;'''
 
+        logger.info('Opening the connection to the database')
         cur = con.cursor()
+        logger.info('Truncating the table')
         cur.execute(sql)
-
+        print(">> Table has been truncated\n")
+        logger.info('Commiting all the data into the database')
         con.commit()
 
-        print(">> Table has been truncated\n")
-
     except db.DatabaseError as e:
-        print(">> Error %s: " % e.args[0])
+        print(">> Something wrong!\n")
+
+        logger.error('%s', e.args[0])
+        logger.warning('Doing the rollback')
         con.rollback
         sys.exit(1)
 
     finally:
         if con is not None:
+            logger.info('Closing the connection to the database')
             con.close()
 
 
@@ -70,11 +92,13 @@ def insert_repos(items):
         con = db.connect(
             **connection_parameters
             )
-
+        logger.info('Opening the connection to the database')
         cur = con.cursor()
 
         for item in items:
             sql = insert_sql_template(item)
+
+            logger.info('Inserting a new repository in the table')
             cur.execute(sql, {
                 'id': item.get('id'),
                 'name_': item.get('name'),
@@ -94,17 +118,21 @@ def insert_repos(items):
                 'watchers_count': int(item.get('watchers_count'))
             })
 
+        print(">> Total repositories inserted: {}\n".format(len(items)))
+        logger.info('Commiting all the data into the database')
         con.commit()
 
-        print(">> Total rows inserted: {}\n".format(len(items)))
-
     except db.DatabaseError as e:
-        print(">> Error %s: " % e.args[0])
+        print(">> Something wrong!\n")
+
+        logger.error('%s', e.args[0])
+        logger.warning('Doing the rollback')
         con.rollback
         sys.exit(1)
 
     finally:
         if con is not None:
+            logger.info('Closing the connection to the database')
             con.close()
 
 
@@ -118,17 +146,21 @@ def get_repos(name_repo):
     api_url = '{}search/repositories?q={}+ \
     language:py&sort=stars&order=desc'.format(api_url_base, name_repo)
 
+    logger.info('Requesting to GitHub and searching for all the repositories')
     r = requests.get(api_url, headers=headers)
 
     if r.status_code == 200:
-        print("STATUS: Connection OK!\n")
+        print(">> STATUS: Connection OK!\n")
     else:
-        print("STATUS: Connection NOK. Error: {}\n".format(r.text))
+        print(">> STATUS: Connection NOK!\n")
+        logger.error('%s', r.text)
+        sys.exit(1)
 
     return r.json()
 
 
 if __name__ == '__main__':
+    logger.info('Process started ...')
     repo_list = get_repos('airflow')
     items = repo_list['items']
 
@@ -137,3 +169,5 @@ if __name__ == '__main__':
         insert_repos(items)
     else:
         print('>> No Repo List Found\n')
+
+    logger.info('Process finished!')
