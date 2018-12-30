@@ -7,6 +7,7 @@ import os
 from bottle import (
     default_app, route, run, request, static_file, view, template, error
     )
+from repos.db import get_rows_count
 
 
 @route('/static/<filename:path>')
@@ -24,20 +25,20 @@ def dashboard():
 
 @route('/analysis')
 # @view('analysis')
-def dashboard():
+def analysis():
     return template('analysis')
 
 
 @route('/integrations')
 # @view('integrations')
-def dashboard():
+def integrations():
     return template('integrations')
 
 
 @route('/metadata')
-# @view('metadata')
-def dashboard():
-    return template('metadata')
+def metadata():
+    rows_count = get_rows_count()
+    return template('metadata', rows_count=rows_count)
 
 
 @error(404)

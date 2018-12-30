@@ -11,7 +11,7 @@ Base = declarative_base()
 
 class Repos(Base):
     __tablename__ = 'repositories'
-    id = Column(String(25))
+    id = Column(String(25), primary_key=True)
     name_ = Column(String(250))
     full_name = Column(String(250))
     description = Column(String(250))

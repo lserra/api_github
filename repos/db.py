@@ -35,23 +35,30 @@ def truncate_tables():
 
 
 def get_repos(tag=None):
-    if tag is not None and VALID_TAG.match(tag.lower()):
-        filter_ = "%{}%".format(tag.lower())
-        tips = session.query(Tip)
-        tips = tips.filter(Tip.text.ilike(filter_))
-    else:
-        tips = session.query(Tip)
+    # if tag is not None and VALID_TAG.match(tag.lower()):
+    #     filter_ = "%{}%".format(tag.lower())
+    #     tips = session.query(Tip)
+    #     tips = tips.filter(Tip.text.ilike(filter_))
+    # else:
+    #     tips = session.query(Tip)
 
-    tips = tips.order_by(Tip.likes.desc())
-    return tips.all()
+    # tips = tips.order_by(Tip.likes.desc())
+    # return tips.all()
+    pass
 
 
 def add_repos(tweets):
-    tweets = tweets if isinstance(tweets, list) else tweets.items()
-    for tw in tweets:
-        session.add(Tip(tweetid=tw.id,
-                        text=tw.text,
-                        created=tw.created_at,
-                        likes=tw.favorite_count,
-                        retweets=tw.retweet_count))
-    session.commit()
+    # tweets = tweets if isinstance(tweets, list) else tweets.items()
+    # for tw in tweets:
+    #     session.add(Tip(tweetid=tw.id,
+    #                     text=tw.text,
+    #                     created=tw.created_at,
+    #                     likes=tw.favorite_count,
+    #                     retweets=tw.retweet_count))
+    # session.commit()
+    pass
+
+
+def get_rows_count():
+    rows_count = session.query(Repos).count()
+    return rows_count
