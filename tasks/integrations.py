@@ -11,6 +11,8 @@ Tasks:
 2-Return all repositories has been found and save the results into the database
 3-Show all repositories has been found
 """
+import requests
+
 from repos.db import (
     truncate_tables, get_repos, add_repos, get_rows_count
     )

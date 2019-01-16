@@ -7,8 +7,8 @@
 
             %if type_msg is not None:
             <!-- Message -->
-            <div class="alert alert-{{ class_msg }}" role="alert">
-                <strong>{{ type_msg }}: </strong>{{ msg }}
+            <div class="alert alert-{{ type_msg }}" role="alert">
+                <strong>{{ class_msg }}: </strong>{{ msg }}
             </div>
             %end
 
@@ -52,10 +52,10 @@
                 %for item in items:
                   <tr>
                     <td>{{ item.id }}</td>
-                    <td>{{ item.name }}</td>
+                    <td>{{ item.name_ }}</td>
                     <td>{{ item.homepage }}</td>
                     <td>{{ item.git_url }}</td>
-                    <td>{{ item.language }}</td>
+                    <td>{{ item.language_ }}</td>
                   </tr>
                 %end
                 </tbody>
