@@ -11,110 +11,9 @@ Tasks:
 2-Return all repositories has been found and save the results into the database
 3-Show all repositories has been found
 """
-import sys
-import os
-import requests
-import psycopg2 as db
-
 from repos.db import (
     truncate_tables, get_repos, add_repos, get_rows_count
     )
-
-# setting the parameters
-con = None
-connection_parameters = {
-    'host': os.environ.get('PGHOST'),
-    'database': os.environ.get('PGDATABASE'),
-    'user': os.environ.get('PGUSER'),
-    'password': os.environ.get('PGPASSWORD')
-}
-
-
-# def truncate_tables():
-#     try:
-#         con = db.connect(
-#             **connection_parameters
-#             )
-
-#         sql = '''DELETE FROM repositories;'''
-
-#         cur = con.cursor()
-#         cur.execute(sql)
-#         con.commit()
-
-#     except db.DatabaseError as e:
-#         con.rollback
-
-#     finally:
-#         if con is not None:
-#             con.close()
-
-
-
-# def insert_sql_template(item):
-#     return '''INSERT INTO repositories (id, name_, full_name, description,
-#     homepage, git_url, ssh_url, language_, private,archived,
-#     forks_count, open_issues_count, score, size_, stargazers_count,
-#     watchers_count) VALUES (%(id)s, %(name_)s, %(full_name)s, %(description)s,
-#     %(homepage)s, %(git_url)s, %(ssh_url)s, %(language_)s, %(private)s,
-#     %(archived)s, %(forks_count)s, %(open_issues_count)s, %(score)s,
-#     %(size_)s, %(stargazers_count)s, %(watchers_count)s);
-#     '''
-
-
-# def insert_repos(items):
-#     try:
-#         con = db.connect(
-#             **connection_parameters
-#             )
-#         cur = con.cursor()
-
-#         for item in items:
-#             sql = insert_sql_template(item)
-#             cur.execute(sql, {
-#                 'id': item.get('id'),
-#                 'name_': item.get('name'),
-#                 'full_name': item.get('full_name'),
-#                 'description': str(item.get('description')).replace('"', ''),
-#                 'homepage': item.get('homepage'),
-#                 'git_url': item.get('git_url'),
-#                 'ssh_url': item.get('ssh_url'),
-#                 'language_': item.get('language'),
-#                 'private': item.get('private'),
-#                 'archived': item.get('archived'),
-#                 'forks_count': int(item.get('forks_count')),
-#                 'open_issues_count': int(item.get('open_issues_count')),
-#                 'score': int(item.get('score')),
-#                 'size_': int(item.get('size')),
-#                 'stargazers_count': int(item.get('stargazers_count')),
-#                 'watchers_count': int(item.get('watchers_count'))
-#             })
-
-#         con.commit()
-
-#     except db.DatabaseError as e:
-#         con.rollback
-
-#     finally:
-#         if con is not None:
-#             con.close()
-
-
-# def select_sql_template():
-#     return '''
-#     SELECT id, name_, homepage, git_url, language_ FROM repositories;
-#     '''
-
-
-# def select_items():
-#     con = db.connect(
-#         **connection_parameters
-#         )
-#     cur = con.cursor()
-
-#     sql = select_sql_template()
-
-#     return cur.execute(sql)
 
 
 def search_api_github(name_repo):
@@ -134,21 +33,21 @@ def search_api_github(name_repo):
         if items is not None:
             truncate_tables()
             add_repos(items)
-            repos = get_repos()
-            type_msg = 'success'
-            msg = 'The connection to GitHub has been done successfully!'
-    else:
-        items = None
-        type_msg = 'warning'
-        msg = 'The connection to GitHub has not been done successfully!'
 
-    parameters = {
-        'class_msg': type_msg.upper(),
-        'type_msg': type_msg,
-        'msg': msg,
-        'num_repos': num_repos,
-        'items': repos
-    }
+            parameters = {
+                'class_msg': 'success'.upper(),
+                'type_msg': 'success',
+                'msg': 'The connection to GitHub has been done successfully!',
+                'num_repos': get_rows_count(),
+                'items': get_repos()
+            }
+    else:
+        parameters = {
+            'class_msg': 'warning'.upper(),
+            'type_msg': 'warning',
+            'msg': 'The connection to GitHub has been done successfully!',
+            'items': None
+        }
 
     return parameters
 

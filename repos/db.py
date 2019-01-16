@@ -47,8 +47,8 @@ def add_repos(items):
     for item in items:
         session.add(
             Repos(
-                id=item.get('id')
-                name_=item.get('name')
+                id=item.get('id'),
+                name_=item.get('name'),
                 full_name=item.get('full_name'),
                 description=str(item.get('description')).replace('"', ''),
                 homepage=item.get('homepage'),
