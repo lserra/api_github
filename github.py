@@ -40,8 +40,9 @@ def integrations():
 
 
 @route('/search', method='POST')
+@view('integrations')
 def search():
-    keyword = request.request.forms.get('keyword')
+    keyword = request.forms.get('keyword')
 
     if keyword is not None:
         parameters = search_api_github(keyword)
@@ -49,15 +50,14 @@ def search():
         class_msg = parameters.get('class_msg')
         type_msg = parameters.get('type_msg')
         msg = parameters.get('msg')
-        num_repos = parameters.get('num_repos')
+        num_repos = get_rows_count()
         items = parameters.get('items')
 
-    return template(
-        'integrations',
+    return dict(
         class_msg=class_msg,
         type_msg=type_msg,
         msg=msg,
-        num_repos=num_pos,
+        num_repos=num_repos,
         items=items)
 
 

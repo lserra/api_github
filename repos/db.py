@@ -34,29 +34,38 @@ def truncate_tables():
     session.commit()
 
 
-def get_repos(tag=None):
-    # if tag is not None and VALID_TAG.match(tag.lower()):
-    #     filter_ = "%{}%".format(tag.lower())
-    #     tips = session.query(Tip)
-    #     tips = tips.filter(Tip.text.ilike(filter_))
-    # else:
-    #     tips = session.query(Tip)
+def get_repos():
+    repos = session.query(
+        Repos.id, Repos.name_, Repos.homepage, Repos.git_url, Repos.language_
+        )
+    repos = repos.order_by(Repos.name_.asc())
 
-    # tips = tips.order_by(Tip.likes.desc())
-    # return tips.all()
-    pass
+    return repos.all()
 
 
-def add_repos(tweets):
-    # tweets = tweets if isinstance(tweets, list) else tweets.items()
-    # for tw in tweets:
-    #     session.add(Tip(tweetid=tw.id,
-    #                     text=tw.text,
-    #                     created=tw.created_at,
-    #                     likes=tw.favorite_count,
-    #                     retweets=tw.retweet_count))
-    # session.commit()
-    pass
+def add_repos(items):
+    for item in items:
+        session.add(
+            Repos(
+                id=item.get('id')
+                name_=item.get('name')
+                full_name=item.get('full_name'),
+                description=str(item.get('description')).replace('"', ''),
+                homepage=item.get('homepage'),
+                git_url=item.get('git_url'),
+                ssh_url=item.get('ssh_url'),
+                language_=item.get('language'),
+                private=item.get('private'),
+                archived=item.get('archived'),
+                forks_count=int(item.get('forks_count')),
+                open_issues_count=int(item.get('open_issues_count')),
+                score=int(item.get('score')),
+                size_=int(item.get('size')),
+                stargazers_count=int(item.get('stargazers_count')),
+                watchers_count=int(item.get('watchers_count'))
+                )
+            )
+    session.commit()
 
 
 def get_rows_count():

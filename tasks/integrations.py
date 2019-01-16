@@ -16,6 +16,10 @@ import os
 import requests
 import psycopg2 as db
 
+from repos.db import (
+    truncate_tables, get_repos, add_repos, get_rows_count
+    )
+
 # setting the parameters
 con = None
 connection_parameters = {
@@ -26,97 +30,91 @@ connection_parameters = {
 }
 
 
-def truncate_tables():
-    try:
-        con = db.connect(
-            **connection_parameters
-            )
+# def truncate_tables():
+#     try:
+#         con = db.connect(
+#             **connection_parameters
+#             )
 
-        sql = '''DELETE FROM repositories;'''
+#         sql = '''DELETE FROM repositories;'''
 
-        cur = con.cursor()
-        cur.execute(sql)
-        con.commit()
+#         cur = con.cursor()
+#         cur.execute(sql)
+#         con.commit()
 
-    except db.DatabaseError as e:
-        con.rollback
+#     except db.DatabaseError as e:
+#         con.rollback
 
-    finally:
-        if con is not None:
-            con.close()
-
-
-def insert_sql_template(item):
-    return '''INSERT INTO repositories (id, name_, full_name, description,
-    homepage, git_url, ssh_url, language_, private,archived,
-    forks_count, open_issues_count, score, size_, stargazers_count,
-    watchers_count) VALUES (%(id)s, %(name_)s, %(full_name)s, %(description)s,
-    %(homepage)s, %(git_url)s, %(ssh_url)s, %(language_)s, %(private)s,
-    %(archived)s, %(forks_count)s, %(open_issues_count)s, %(score)s,
-    %(size_)s, %(stargazers_count)s, %(watchers_count)s);
-    '''
+#     finally:
+#         if con is not None:
+#             con.close()
 
 
-def insert_repos(items):
-    try:
-        con = db.connect(
-            **connection_parameters
-            )
-        cur = con.cursor()
 
-        for item in items:
-            sql = insert_sql_template(item)
-            cur.execute(sql, {
-                'id': item.get('id'),
-                'name_': item.get('name'),
-                'full_name': item.get('full_name'),
-                'description': str(item.get('description')).replace('"', ''),
-                'homepage': item.get('homepage'),
-                'git_url': item.get('git_url'),
-                'ssh_url': item.get('ssh_url'),
-                'language_': item.get('language'),
-                'private': item.get('private'),
-                'archived': item.get('archived'),
-                'forks_count': int(item.get('forks_count')),
-                'open_issues_count': int(item.get('open_issues_count')),
-                'score': int(item.get('score')),
-                'size_': int(item.get('size')),
-                'stargazers_count': int(item.get('stargazers_count')),
-                'watchers_count': int(item.get('watchers_count'))
-            })
-
-        con.commit()
-
-    except db.DatabaseError as e:
-        con.rollback
-
-    finally:
-        if con is not None:
-            con.close()
+# def insert_sql_template(item):
+#     return '''INSERT INTO repositories (id, name_, full_name, description,
+#     homepage, git_url, ssh_url, language_, private,archived,
+#     forks_count, open_issues_count, score, size_, stargazers_count,
+#     watchers_count) VALUES (%(id)s, %(name_)s, %(full_name)s, %(description)s,
+#     %(homepage)s, %(git_url)s, %(ssh_url)s, %(language_)s, %(private)s,
+#     %(archived)s, %(forks_count)s, %(open_issues_count)s, %(score)s,
+#     %(size_)s, %(stargazers_count)s, %(watchers_count)s);
+#     '''
 
 
-def select_sql_template():
-    return '''
-    SELECT id, name, homepage, git_url, language FROM repositories;
-    '''
+# def insert_repos(items):
+#     try:
+#         con = db.connect(
+#             **connection_parameters
+#             )
+#         cur = con.cursor()
+
+#         for item in items:
+#             sql = insert_sql_template(item)
+#             cur.execute(sql, {
+#                 'id': item.get('id'),
+#                 'name_': item.get('name'),
+#                 'full_name': item.get('full_name'),
+#                 'description': str(item.get('description')).replace('"', ''),
+#                 'homepage': item.get('homepage'),
+#                 'git_url': item.get('git_url'),
+#                 'ssh_url': item.get('ssh_url'),
+#                 'language_': item.get('language'),
+#                 'private': item.get('private'),
+#                 'archived': item.get('archived'),
+#                 'forks_count': int(item.get('forks_count')),
+#                 'open_issues_count': int(item.get('open_issues_count')),
+#                 'score': int(item.get('score')),
+#                 'size_': int(item.get('size')),
+#                 'stargazers_count': int(item.get('stargazers_count')),
+#                 'watchers_count': int(item.get('watchers_count'))
+#             })
+
+#         con.commit()
+
+#     except db.DatabaseError as e:
+#         con.rollback
+
+#     finally:
+#         if con is not None:
+#             con.close()
 
 
-def select_items():
-    try:
-        con = db.connect(
-            **connection_parameters
-            )
-        cur = con.cursor()
+# def select_sql_template():
+#     return '''
+#     SELECT id, name_, homepage, git_url, language_ FROM repositories;
+#     '''
 
-        sql = select_sql_template()
-        cur.execute(sql)
 
-    except db.DatabaseError as e:
-        con.rollback
+# def select_items():
+#     con = db.connect(
+#         **connection_parameters
+#         )
+#     cur = con.cursor()
 
-    finally:
-        if con is not None:
-            con.close()
+#     sql = select_sql_template()
+
+#     return cur.execute(sql)
 
 
 def search_api_github(name_repo):
@@ -132,20 +130,15 @@ def search_api_github(name_repo):
     r = requests.get(api_url, headers=headers)
 
     if r.status_code == 200:
-        # TODO: improve this part of the code
-        repo_list = r.json()
-        items = repo_list['items']
+        items = r.json()['items']
         if items is not None:
             truncate_tables()
-            insert_repos(items)
-            items = select_items()
-            print(items)
-            num_repos = len(items)
+            add_repos(items)
+            repos = get_repos()
             type_msg = 'success'
             msg = 'The connection to GitHub has been done successfully!'
     else:
         items = None
-        num_repos = 0
         type_msg = 'warning'
         msg = 'The connection to GitHub has not been done successfully!'
 
@@ -154,7 +147,11 @@ def search_api_github(name_repo):
         'type_msg': type_msg,
         'msg': msg,
         'num_repos': num_repos,
-        'items': items
+        'items': repos
     }
 
     return parameters
+
+
+if __name__ == "__main__":
+    search_api_github('airflow')
