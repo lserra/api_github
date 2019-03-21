@@ -11,11 +11,12 @@ This task should be run daily through a cronjob to check for new tips and
 update the stats (number of likes and retweets) on existing tweets.
 The tables are recreated daily.
 """
-import sys
-import os
-import requests
-import psycopg2 as db
 import logging
+import os
+import sys
+
+import psycopg2 as db
+import requests
 
 # setting the parameters
 con = None
@@ -47,6 +48,7 @@ logger.addHandler(ch)
 
 
 def truncate_tables():
+    global con
     try:
         con = db.connect(
             **connection_parameters
@@ -59,7 +61,7 @@ def truncate_tables():
         logger.info('Truncating the table')
         cur.execute(sql)
         print(">> Table has been truncated\n")
-        logger.info('Commiting all the data into the database')
+        logger.info('Committing all the data into the database')
         con.commit()
 
     except db.DatabaseError as e:
@@ -88,6 +90,7 @@ def insert_sql_template(item):
 
 
 def insert_repos(items):
+    global con
     try:
         con = db.connect(
             **connection_parameters
