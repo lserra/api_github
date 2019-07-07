@@ -78,7 +78,7 @@ def truncate_tables():
             con.close()
 
 
-def insert_sql_template(item):
+def insert_sql_template():
     return '''INSERT INTO repositories (id, name_, full_name, description,
     homepage, git_url, ssh_url, language_, private,archived,
     forks_count, open_issues_count, score, size_, stargazers_count,
@@ -99,7 +99,7 @@ def insert_repos(items):
         cur = con.cursor()
 
         for item in items:
-            sql = insert_sql_template(item)
+            sql = insert_sql_template()
 
             logger.info('Inserting a new repository in the table')
             cur.execute(sql, {
@@ -122,7 +122,7 @@ def insert_repos(items):
             })
 
         print(">> Total repositories inserted: {}\n".format(len(items)))
-        logger.info('Commiting all the data into the database')
+        logger.info('Committing all the data into the database')
         con.commit()
 
     except db.DatabaseError as e:
