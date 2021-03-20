@@ -7,7 +7,7 @@ Click==7.0
 dataset==1.1.0
 idna==2.7
 itsdangerous==1.1.0
-Jinja2==2.10
+Jinja2==2.11.3
 MarkupSafe==1.1.0
 more-itertools==4.3.0
 normality==1.0.0
